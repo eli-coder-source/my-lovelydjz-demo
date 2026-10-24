@@ -3,10 +3,843 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My DJZ Demo</title>
+  <meta name="theme-color" content="#171219">
+  <title>DJZ — Interactive Demo</title>
+
+  <style>
+    :root {
+      --bg: #171219;
+      --panel: rgba(28, 22, 30, 0.82);
+      --panel2: rgba(45, 32, 44, 0.88);
+      --text: #fff8fb;
+      --muted: #d0c3ce;
+      --accent: #ffc0cb;
+      --pink: #f4a17b;
+      --border: rgba(255, 210, 220, 0.24);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background-color: var(--bg);
+      background-image:
+        linear-gradient(
+          rgba(18, 14, 21, 0.53),
+          rgba(18, 14, 21, 0.76)
+        ),
+        url("./background.png");
+      background-size: cover;
+      background-position: center top;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 235px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    aside {
+      padding: 28px 18px;
+      border-right: 1px solid var(--border);
+      background: rgba(20, 16, 23, 0.84);
+      backdrop-filter: blur(14px);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 38px 8px;
+      font-size: 25px;
+      font-weight: 900;
+      letter-spacing: 2px;
+    }
+
+    .logo-icon {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 13px;
+      background: linear-gradient(135deg, var(--accent), var(--pink));
+      color: #251622;
+    }
+
+    .nav-label {
+      margin: 25px 10px 10px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 13px 12px;
+      margin: 4px 0;
+      border: 0;
+      border-radius: 12px;
+      background: transparent;
+      color: #e1d5df;
+      text-align: left;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .nav:hover,
+    .nav.active {
+      background: rgba(255, 192, 203, 0.14);
+      color: #ffd5e0;
+    }
+
+    main {
+      min-width: 0;
+      padding: 30px 5%;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 35px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 8px 0;
+      font-size: clamp(27px, 4vw, 38px);
+      letter-spacing: -1px;
+    }
+
+    h2,
+    h3 {
+      line-height: 1.35;
+    }
+
+    p {
+      line-height: 1.7;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .avatar {
+      display: grid;
+      place-items: center;
+      width: 43px;
+      height: 43px;
+      flex-shrink: 0;
+      border: 1px solid rgba(255, 192, 203, 0.5);
+      border-radius: 50%;
+      background: rgba(45, 32, 44, 0.9);
+      color: #ffe2ea;
+      font-weight: 800;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(24px, 5vw, 43px);
+      border: 1px solid rgba(255, 192, 203, 0.35);
+      border-radius: 25px;
+      background:
+        linear-gradient(
+          120deg,
+          rgba(48, 31, 47, 0.90),
+          rgba(30, 22, 34, 0.82)
+        );
+      backdrop-filter: blur(12px);
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.16);
+    }
+
+    .hero h2 {
+      max-width: 600px;
+      margin: 14px 0;
+      font-size: clamp(25px, 4vw, 37px);
+      line-height: 1.25;
+    }
+
+    .hero p {
+      max-width: 560px;
+      color: #e0cfdc;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 17px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(55, 40, 55, 0.9);
+      color: var(--text);
+      font-weight: 700;
+      transition: transform 0.2s, filter 0.2s;
+    }
+
+    .button:hover {
+      filter: brightness(1.15);
+      transform: translateY(-2px);
+    }
+
+    .button.primary {
+      border-color: transparent;
+      background: linear-gradient(120deg, #ffc0cb, #f4a17b);
+      color: #281923;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 34px 0 17px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: 21px;
+    }
+
+    .search {
+      width: min(100%, 250px);
+      padding: 11px 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      outline: none;
+      background: rgba(27, 21, 30, 0.88);
+      color: var(--text);
+    }
+
+    .search::placeholder {
+      color: #b9a9b7;
+    }
+
+    .search:focus {
+      border-color: var(--accent);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 17px;
+    }
+
+    .card {
+      min-width: 0;
+      padding: 22px;
+      border: 1px solid var(--border);
+      border-radius: 19px;
+      background: var(--panel);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 192, 203, 0.65);
+    }
+
+    .service-icon {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 15px;
+      background: rgba(255, 192, 203, 0.14);
+      color: #ffd0dd;
+      font-size: 24px;
+    }
+
+    .card h3 {
+      margin: 18px 0 7px;
+    }
+
+    .card p {
+      min-height: 50px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .card .button {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 5px 9px;
+      border: 1px solid rgba(255, 192, 203, 0.35);
+      border-radius: 30px;
+      color: #ffd5e0;
+      font-size: 11px;
+    }
+
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 17px;
+      margin-top: 20px;
+    }
+
+    .activity-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .activity-row:last-child {
+      border-bottom: 0;
+    }
+
+    .activity-icon {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      flex-shrink: 0;
+      border-radius: 12px;
+      background: rgba(255, 192, 203, 0.13);
+      color: #ffd5e0;
+    }
+
+    .activity-row strong {
+      font-size: 14px;
+    }
+
+    .activity-row small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+    }
+
+    .notice {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 5;
+      max-width: min(360px, calc(100vw - 32px));
+      padding: 15px 19px;
+      border: 1px solid rgba(255, 192, 203, 0.5);
+      border-radius: 14px;
+      background: rgba(45, 32, 44, 0.97);
+      color: var(--text);
+      box-shadow: 0 12px 35px #0005;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .notice.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .empty {
+      grid-column: 1 / -1;
+      padding: 30px;
+      border: 1px dashed var(--border);
+      border-radius: 16px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    footer {
+      padding: 30px 0 10px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    @media (max-width: 1000px) {
+      .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .app {
+        grid-template-columns: 190px minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 680px) {
+      body {
+        background-attachment: scroll;
+        background-position: center top;
+      }
+
+      .app {
+        display: block;
+      }
+
+      aside {
+        padding: 16px;
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .logo {
+        margin: 0 0 12px;
+      }
+
+      .nav-label {
+        display: none;
+      }
+
+      .nav-list {
+        display: flex;
+        gap: 5px;
+        overflow-x: auto;
+      }
+
+      .nav {
+        width: auto;
+        flex-shrink: 0;
+        padding: 10px;
+      }
+
+      main {
+        padding: 23px 16px;
+      }
+
+      header {
+        align-items: flex-start;
+      }
+
+      .grid,
+      .bottom-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .search {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <h1>Website của tôi</h1>
-  <p>Xin chào! Đây là website đầu tiên của tôi.</p>
+  <div class="app">
+    <aside>
+      <div class="logo">
+        <span class="logo-icon">D</span>
+        <span>DJZ</span>
+      </div>
+
+      <div class="nav-label">Workspace</div>
+
+      <div class="nav-list">
+        <button class="nav active" data-view="home">
+          ⌂ Overview
+        </button>
+
+        <button class="nav" data-view="services">
+          ▦ Services
+        </button>
+
+        <button class="nav" data-view="activity">
+          ◷ Activity
+        </button>
+
+        <button class="nav" data-view="about">
+          ⓘ About DJZ
+        </button>
+      </div>
+
+      <div class="nav-label">Demo mode</div>
+
+      <button class="nav" id="reset">
+        ↻ Reset demo
+      </button>
+    </aside>
+
+    <main>
+      <header>
+        <div>
+          <div class="eyebrow">Interactive experience</div>
+
+          <h1 id="page-title">
+            Welcome to DJZ.
+          </h1>
+
+          <div class="muted" id="page-subtitle">
+            Explore the interface and try the demo features.
+          </div>
+        </div>
+
+        <div class="avatar" title="Demo profile">E</div>
+      </header>
+
+      <section class="hero" id="hero">
+        <span class="tag">UNOFFICIAL DEMO</span>
+
+        <h2>A little space for your digital world.</h2>
+
+        <p>
+          Discover the services, explore the interface, and try out
+          interactive features. Everything here is a local simulation.
+        </p>
+
+        <button class="button primary" id="explore">
+          Explore services ↗
+        </button>
+      </section>
+
+      <div class="section-head" id="services-heading">
+        <h2>Explore services</h2>
+
+        <input
+          class="search"
+          id="search"
+          type="search"
+          placeholder="Search services..."
+          aria-label="Search services"
+        >
+      </div>
+
+      <section class="grid" id="service-grid">
+        <article
+          class="card"
+          data-search="music audio player"
+        >
+          <div class="service-icon">♫</div>
+
+          <h3>Music experience</h3>
+
+          <p>
+            Explore a music-style interface and try the demo player.
+          </p>
+
+          <span class="tag">INTERACTIVE</span>
+
+          <button class="button primary service-button" data-service="music">
+            Open music →
+          </button>
+        </article>
+
+        <article
+          class="card"
+          data-search="calls communication phone"
+        >
+          <div class="service-icon">♧</div>
+
+          <h3>Call experience</h3>
+
+          <p>
+            Try a simulated calling screen without making real calls.
+          </p>
+
+          <span class="tag">SIMULATION</span>
+
+          <button class="button service-button" data-service="calls">
+            Open calls →
+          </button>
+        </article>
+
+        <article
+          class="card"
+          data-search="orders shopping products"
+        >
+          <div class="service-icon">▣</div>
+
+          <h3>Order experience</h3>
+
+          <p>
+            Browse a mock order flow and see how the interface responds.
+          </p>
+
+          <span class="tag">SIMULATION</span>
+
+          <button class="button service-button" data-service="orders">
+            Open orders →
+          </button>
+        </article>
+      </section>
+
+      <section class="bottom-grid">
+        <article class="card">
+          <h3>Recent activity</h3>
+
+          <p>
+            Demo interactions will appear here while you explore.
+          </p>
+
+          <div id="activity-list">
+            <div class="activity-row">
+              <div class="activity-icon">✦</div>
+
+              <div>
+                <strong>Welcome to DJZ</strong>
+                <small>Your demo is ready to explore.</small>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <h3>About this demo</h3>
+
+          <p>
+            This is an unofficial fan-made interface prototype.
+            It is not affiliated with the original service.
+          </p>
+
+          <button class="button" id="about-button">
+            Learn more ↗
+          </button>
+        </article>
+      </section>
+
+      <footer>
+        Unofficial demo · No real orders, calls, accounts or music streaming
+      </footer>
+    </main>
+  </div>
+
+  <div class="notice" id="notice" role="status" aria-live="polite"></div>
+
+  <script>
+    const notice = document.getElementById("notice");
+    const activityList = document.getElementById("activity-list");
+    let noticeTimer;
+
+    function notify(message) {
+      notice.textContent = message;
+      notice.classList.add("show");
+
+      clearTimeout(noticeTimer);
+
+      noticeTimer = setTimeout(() => {
+        notice.classList.remove("show");
+      }, 3000);
+    }
+
+    function logActivity(title, description) {
+      const row = document.createElement("div");
+      row.className = "activity-row";
+
+      const icon = document.createElement("div");
+      icon.className = "activity-icon";
+      icon.textContent = "✦";
+
+      const content = document.createElement("div");
+
+      const strong = document.createElement("strong");
+      strong.textContent = title;
+
+      const small = document.createElement("small");
+      small.textContent = description;
+
+      content.append(strong, small);
+      row.append(icon, content);
+      activityList.prepend(row);
+
+      while (activityList.children.length > 5) {
+        activityList.lastElementChild.remove();
+      }
+    }
+
+    const services = {
+      music: {
+        title: "Music experience",
+        message: "Demo music player opened. No real audio is streamed."
+      },
+
+      calls: {
+        title: "Call experience",
+        message: "Call simulator opened. No real call was made."
+      },
+
+      orders: {
+        title: "Order experience",
+        message: "Order simulator opened. No real order was placed."
+      }
+    };
+
+    document.querySelectorAll(".service-button").forEach(button => {
+      button.addEventListener("click", () => {
+        const service = services[button.dataset.service];
+
+        notify(service.message);
+
+        logActivity(
+          service.title,
+          "Opened just now · Demo only"
+        );
+      });
+    });
+
+    document.getElementById("explore").addEventListener("click", () => {
+      document.getElementById("services-heading").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+      notify("Choose a service to explore.");
+    });
+
+    document.getElementById("about-button").addEventListener("click", () => {
+      notify("DJZ Demo is an unofficial interface prototype.");
+
+      logActivity(
+        "About this demo",
+        "Viewed demo information"
+      );
+    });
+
+    document.getElementById("search").addEventListener("input", event => {
+      const query = event.target.value.trim().toLowerCase();
+      let visible = 0;
+
+      document.querySelectorAll("#service-grid .card").forEach(card => {
+        const text = (
+          card.dataset.search + " " + card.innerText
+        ).toLowerCase();
+
+        const match = text.includes(query);
+
+        card.hidden = !match;
+
+        if (match) visible++;
+      });
+
+      let empty = document.getElementById("empty-results");
+
+      if (!visible && !empty) {
+        empty = document.createElement("div");
+        empty.id = "empty-results";
+        empty.className = "empty";
+        empty.textContent = "No services found. Try another search.";
+
+        document.getElementById("service-grid").append(empty);
+      } else if (visible && empty) {
+        empty.remove();
+      }
+    });
+
+    document.querySelectorAll(".nav[data-view]").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".nav[data-view]").forEach(item => {
+          item.classList.toggle("active", item === button);
+        });
+
+        const view = button.dataset.view;
+
+        const titles = {
+          home: [
+            "Welcome to DJZ.",
+            "Explore the demo homepage."
+          ],
+
+          services: [
+            "Explore services.",
+            "Choose a service to try."
+          ],
+
+          activity: [
+            "Your activity.",
+            "See the interactions in this session."
+          ],
+
+          about: [
+            "About DJZ Demo.",
+            "An unofficial interface prototype."
+          ]
+        };
+
+        document.getElementById("page-title").textContent =
+          titles[view][0];
+
+        document.getElementById("page-subtitle").textContent =
+          titles[view][1];
+
+        if (view === "services") {
+          document.getElementById("services-heading").scrollIntoView({
+            behavior: "smooth"
+          });
+        } else if (view === "activity") {
+          activityList.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+          });
+        } else if (view === "about") {
+          document.getElementById("about-button").scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+          });
+        } else {
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+          });
+        }
+      });
+    });
+
+    document.getElementById("reset").addEventListener("click", () => {
+      activityList.replaceChildren();
+
+      logActivity(
+        "Welcome to DJZ",
+        "Your demo is ready to explore."
+      );
+
+      document.getElementById("search").value = "";
+
+      document.querySelectorAll("#service-grid .card").forEach(card => {
+        card.hidden = false;
+      });
+
+      const empty = document.getElementById("empty-results");
+
+      if (empty) {
+        empty.remove();
+      }
+
+      notify("Demo activity has been reset.");
+    });
+  </script>
 </body>
 </html>
