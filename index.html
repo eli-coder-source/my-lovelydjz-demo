@@ -1,845 +1,1086 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#171219">
-  <title>DJZ — Interactive Demo</title>
-
-  <style>
-    :root {
-      --bg: #171219;
-      --panel: rgba(28, 22, 30, 0.82);
-      --panel2: rgba(45, 32, 44, 0.88);
-      --text: #fff8fb;
-      --muted: #d0c3ce;
-      --accent: #ffc0cb;
-      --pink: #f4a17b;
-      --border: rgba(255, 210, 220, 0.24);
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background-color: var(--bg);
-      background-image:
-        linear-gradient(
-          rgba(18, 14, 21, 0.53),
-          rgba(18, 14, 21, 0.76)
-        ),
-        url("./background.png");
-      background-size: cover;
-      background-position: center top;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
-      color: var(--text);
-      font-family: Inter, system-ui, -apple-system, sans-serif;
-    }
-
-    button,
-    input {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    .app {
-      display: grid;
-      grid-template-columns: 235px minmax(0, 1fr);
-      min-height: 100vh;
-    }
-
-    aside {
-      padding: 28px 18px;
-      border-right: 1px solid var(--border);
-      background: rgba(20, 16, 23, 0.84);
-      backdrop-filter: blur(14px);
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 0 0 38px 8px;
-      font-size: 25px;
-      font-weight: 900;
-      letter-spacing: 2px;
-    }
-
-    .logo-icon {
-      display: grid;
-      place-items: center;
-      width: 38px;
-      height: 38px;
-      border-radius: 13px;
-      background: linear-gradient(135deg, var(--accent), var(--pink));
-      color: #251622;
-    }
-
-    .nav-label {
-      margin: 25px 10px 10px;
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-    }
-
-    .nav {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      width: 100%;
-      padding: 13px 12px;
-      margin: 4px 0;
-      border: 0;
-      border-radius: 12px;
-      background: transparent;
-      color: #e1d5df;
-      text-align: left;
-      transition: background 0.2s, color 0.2s;
-    }
-
-    .nav:hover,
-    .nav.active {
-      background: rgba(255, 192, 203, 0.14);
-      color: #ffd5e0;
-    }
-
-    main {
-      min-width: 0;
-      padding: 30px 5%;
-    }
-
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 35px;
-    }
-
-    .eyebrow {
-      color: var(--accent);
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      margin: 8px 0;
-      font-size: clamp(27px, 4vw, 38px);
-      letter-spacing: -1px;
-    }
-
-    h2,
-    h3 {
-      line-height: 1.35;
-    }
-
-    p {
-      line-height: 1.7;
-    }
-
-    .muted {
-      color: var(--muted);
-    }
-
-    .avatar {
-      display: grid;
-      place-items: center;
-      width: 43px;
-      height: 43px;
-      flex-shrink: 0;
-      border: 1px solid rgba(255, 192, 203, 0.5);
-      border-radius: 50%;
-      background: rgba(45, 32, 44, 0.9);
-      color: #ffe2ea;
-      font-weight: 800;
-    }
-
-    .hero {
-      position: relative;
-      overflow: hidden;
-      padding: clamp(24px, 5vw, 43px);
-      border: 1px solid rgba(255, 192, 203, 0.35);
-      border-radius: 25px;
-      background:
-        linear-gradient(
-          120deg,
-          rgba(48, 31, 47, 0.90),
-          rgba(30, 22, 34, 0.82)
-        );
-      backdrop-filter: blur(12px);
-      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.16);
-    }
-
-    .hero h2 {
-      max-width: 600px;
-      margin: 14px 0;
-      font-size: clamp(25px, 4vw, 37px);
-      line-height: 1.25;
-    }
-
-    .hero p {
-      max-width: 560px;
-      color: #e0cfdc;
-    }
-
-    .button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 12px 17px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: rgba(55, 40, 55, 0.9);
-      color: var(--text);
-      font-weight: 700;
-      transition: transform 0.2s, filter 0.2s;
-    }
-
-    .button:hover {
-      filter: brightness(1.15);
-      transform: translateY(-2px);
-    }
-
-    .button.primary {
-      border-color: transparent;
-      background: linear-gradient(120deg, #ffc0cb, #f4a17b);
-      color: #281923;
-    }
-
-    .section-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin: 34px 0 17px;
-    }
-
-    .section-head h2 {
-      margin: 0;
-      font-size: 21px;
-    }
-
-    .search {
-      width: min(100%, 250px);
-      padding: 11px 14px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      outline: none;
-      background: rgba(27, 21, 30, 0.88);
-      color: var(--text);
-    }
-
-    .search::placeholder {
-      color: #b9a9b7;
-    }
-
-    .search:focus {
-      border-color: var(--accent);
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 17px;
-    }
-
-    .card {
-      min-width: 0;
-      padding: 22px;
-      border: 1px solid var(--border);
-      border-radius: 19px;
-      background: var(--panel);
-      backdrop-filter: blur(12px);
-      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
-      transition: transform 0.2s, border-color 0.2s;
-    }
-
-    .card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(255, 192, 203, 0.65);
-    }
-
-    .service-icon {
-      display: grid;
-      place-items: center;
-      width: 48px;
-      height: 48px;
-      border-radius: 15px;
-      background: rgba(255, 192, 203, 0.14);
-      color: #ffd0dd;
-      font-size: 24px;
-    }
-
-    .card h3 {
-      margin: 18px 0 7px;
-    }
-
-    .card p {
-      min-height: 50px;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .card .button {
-      width: 100%;
-      margin-top: 10px;
-    }
-
-    .tag {
-      display: inline-block;
-      padding: 5px 9px;
-      border: 1px solid rgba(255, 192, 203, 0.35);
-      border-radius: 30px;
-      color: #ffd5e0;
-      font-size: 11px;
-    }
-
-    .bottom-grid {
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 17px;
-      margin-top: 20px;
-    }
-
-    .activity-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 13px 0;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .activity-row:last-child {
-      border-bottom: 0;
-    }
-
-    .activity-icon {
-      display: grid;
-      place-items: center;
-      width: 38px;
-      height: 38px;
-      flex-shrink: 0;
-      border-radius: 12px;
-      background: rgba(255, 192, 203, 0.13);
-      color: #ffd5e0;
-    }
-
-    .activity-row strong {
-      font-size: 14px;
-    }
-
-    .activity-row small {
-      display: block;
-      margin-top: 4px;
-      color: var(--muted);
-    }
-
-    .notice {
-      position: fixed;
-      right: 22px;
-      bottom: 22px;
-      z-index: 5;
-      max-width: min(360px, calc(100vw - 32px));
-      padding: 15px 19px;
-      border: 1px solid rgba(255, 192, 203, 0.5);
-      border-radius: 14px;
-      background: rgba(45, 32, 44, 0.97);
-      color: var(--text);
-      box-shadow: 0 12px 35px #0005;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(10px);
-      transition: opacity 0.2s, transform 0.2s;
-    }
-
-    .notice.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .empty {
-      grid-column: 1 / -1;
-      padding: 30px;
-      border: 1px dashed var(--border);
-      border-radius: 16px;
-      color: var(--muted);
-      text-align: center;
-    }
-
-    footer {
-      padding: 30px 0 10px;
-      color: var(--muted);
-      font-size: 12px;
-      text-align: center;
-    }
-
-    @media (max-width: 1000px) {
-      .grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .app {
-        grid-template-columns: 190px minmax(0, 1fr);
-      }
-    }
-
-    @media (max-width: 680px) {
-      body {
-        background-attachment: scroll;
-        background-position: center top;
-      }
-
-      .app {
-        display: block;
-      }
-
-      aside {
-        padding: 16px;
-        border-right: 0;
-        border-bottom: 1px solid var(--border);
-      }
-
-      .logo {
-        margin: 0 0 12px;
-      }
-
-      .nav-label {
-        display: none;
-      }
-
-      .nav-list {
-        display: flex;
-        gap: 5px;
-        overflow-x: auto;
-      }
-
-      .nav {
-        width: auto;
-        flex-shrink: 0;
-        padding: 10px;
-      }
-
-      main {
-        padding: 23px 16px;
-      }
-
-      header {
-        align-items: flex-start;
-      }
-
-      .grid,
-      .bottom-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .section-head {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .search {
-        width: 100%;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galaxy — My Phone</title>
+
+<style>
+:root {
+  --pink: #ffb8d2;
+  --purple: #d9c6ff;
+  --ink: #292532;
+  --glass: rgba(255,255,255,.78);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background:
+    radial-gradient(ellipse at 15% 20%, #f6c9dc 0, transparent 38%),
+    radial-gradient(ellipse at 85% 80%, #bcb2f4 0, transparent 40%),
+    #292535;
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: var(--ink);
+}
+
+button, input { font: inherit; }
+button { cursor: pointer; }
+
+.phone {
+  width: min(100%, 410px);
+  height: min(850px, 96dvh);
+  min-height: 570px;
+  background: #17151d;
+  border: 5px solid #4a4652;
+  border-radius: 43px;
+  padding: 7px;
+  box-shadow: 0 25px 90px #100d1b99;
+  overflow: hidden;
+  position: relative;
+}
+
+.screen {
+  height: 100%;
+  border-radius: 32px;
+  overflow: hidden;
+  position: relative;
+  background: #f8f3fa;
+}
+
+.status {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 36px;
+  padding: 9px 22px 0;
+  display: flex;
+  justify-content: space-between;
+  z-index: 20;
+  font-size: 12px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.status-right { letter-spacing: 2px; }
+
+.home {
+  height: 100%;
+  padding: 60px 23px 25px;
+  display: flex;
+  flex-direction: column;
+  background:
+    linear-gradient(160deg, #fce0eb77, #b8b1f555),
+    url("./background.png") center / cover,
+    linear-gradient(145deg, #e9c7e1, #a7a4dc);
+  position: relative;
+}
+
+.home::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(#ffffff28, #5d416c30);
+  pointer-events: none;
+}
+
+.home > * { position: relative; }
+
+.clock {
+  font-size: 57px;
+  font-weight: 300;
+  letter-spacing: -3px;
+  color: #fff;
+  text-shadow: 0 2px 12px #59425c66;
+}
+
+.date {
+  color: white;
+  font-size: 14px;
+  margin-top: -3px;
+  text-shadow: 0 1px 6px #55405f;
+}
+
+.weather {
+  margin-top: 25px;
+  padding: 13px 16px;
+  border: 1px solid #ffffff75;
+  background: #ffffff43;
+  backdrop-filter: blur(16px);
+  border-radius: 23px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+}
+
+.weather strong { font-size: 23px; }
+.weather small { display: block; margin-top: 3px; }
+
+.app-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 25px 9px;
+  margin-top: auto;
+  margin-bottom: 25px;
+}
+
+.app {
+  border: 0;
+  padding: 0;
+  color: white;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  text-shadow: 0 1px 5px #45334d;
+}
+
+.app-icon {
+  width: 53px;
+  height: 53px;
+  border-radius: 17px;
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  box-shadow: 0 5px 13px #33203a26;
+  text-shadow: none;
+  transition: transform .15s;
+}
+
+.app:active .app-icon { transform: scale(.9); }
+.i-phone { background: linear-gradient(145deg,#7de5ac,#16a96e); }
+.i-msg { background: linear-gradient(145deg,#8fe9cf,#20b7a3); }
+.i-kakao { background: #fee500; }
+.i-insta { background: linear-gradient(35deg,#ffb34d,#fa4c86,#9a55e8); }
+.i-camera { background: linear-gradient(145deg,#e4e2ed,#9c94b9); }
+.i-gallery { background: linear-gradient(145deg,#ffdd9b,#f39c86); }
+.i-settings { background: linear-gradient(145deg,#c5c8d7,#777b92); }
+.i-browser { background: linear-gradient(145deg,#9bd9ff,#5484e8); }
+
+.dock {
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 8px;
+  background: #ffffff48;
+  border: 1px solid #ffffff66;
+  backdrop-filter: blur(20px);
+  border-radius: 25px;
+}
+
+.dock .app-icon { width: 51px; height: 51px; }
+
+.app-window {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: #f8f6fa;
+  z-index: 10;
+  flex-direction: column;
+}
+
+.app-window.active { display: flex; }
+
+.app-header {
+  padding: 47px 19px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border-bottom: 1px solid #eee9f0;
+  flex-shrink: 0;
+}
+
+.back {
+  border: 0;
+  background: #f2edf5;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 20px;
+}
+
+.header-title { font-size: 20px; font-weight: 750; }
+.header-sub { color: #88808f; font-size: 11px; margin-top: 3px; }
+.header-actions { margin-left: auto; font-size: 20px; }
+
+.app-body { flex: 1; min-height: 0; overflow: auto; }
+.bottom-nav {
+  height: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: inherit;
+  flex-shrink: 0;
+}
+
+.bottom-nav span {
+  width: 105px;
+  height: 4px;
+  background: #292532;
+  border-radius: 9px;
+}
+
+/* Phone / LeeAn chat */
+.chat-app { background: #f8f5fa; }
+
+.chat-head {
+  background: #fff;
+  padding: 44px 15px 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid #eee9f0;
+}
+
+.avatar {
+  width: 43px;
+  height: 43px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg,#ffc5dc,#b9a7f5);
+  font-size: 23px;
+  flex-shrink: 0;
+}
+
+.chat-head .name { font-weight: 750; font-size: 16px; }
+.online { font-size: 11px; color: #2aab77; margin-top: 4px; }
+.chat-tools { margin-left: auto; color: #8c7e98; font-size: 21px; }
+
+.chat-messages {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 17px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background:
+    radial-gradient(ellipse at 0% 0%, #fce4ef 0, transparent 50%),
+    #f7f3fa;
+}
+
+.day-label {
+  align-self: center;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: #ffffffbd;
+  color: #908397;
+  font-size: 10px;
+  margin-bottom: 4px;
+}
+
+.message-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 7px;
+  max-width: 88%;
+}
+
+.message-row.mine { align-self: flex-end; flex-direction: row-reverse; }
+.message-row.theirs { align-self: flex-start; }
+
+.mini-avatar {
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,#ffc5dc,#b9a7f5);
+  display: grid;
+  place-items: center;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.message-content { display: flex; flex-direction: column; gap: 4px; }
+.sender { font-size: 10px; color: #8c8295; padding-left: 3px; }
+
+.bubble {
+  padding: 10px 13px;
+  font-size: 13px;
+  line-height: 1.48;
+  border-radius: 16px;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.theirs .bubble {
+  background: white;
+  border-top-left-radius: 5px;
+  box-shadow: 0 2px 7px #5c3d6a0b;
+}
+
+.mine .bubble {
+  background: #e8d9ff;
+  border-top-right-radius: 5px;
+}
+
+.msg-time { font-size: 9px; color: #a197aa; padding: 0 4px; }
+
+.typing {
+  color: #8f829a;
+  font-size: 12px;
+  padding: 4px 8px;
+  display: none;
+}
+
+.chat-compose {
+  background: #fff;
+  padding: 10px 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px solid #eee9f0;
+}
+
+.chat-compose input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: #f4f0f7;
+  border-radius: 22px;
+  padding: 12px 14px;
+  font-size: 13px;
+}
+
+.send {
+  width: 41px;
+  height: 41px;
+  border: 0;
+  border-radius: 50%;
+  background: #d9c5ff;
+  color: #4d3a67;
+  font-size: 19px;
+}
+
+.quick-replies {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  background: #fff;
+  padding: 0 10px 10px;
+}
+
+.quick-replies button {
+  white-space: nowrap;
+  border: 1px solid #e6d9f3;
+  background: #faf6ff;
+  color: #79648f;
+  border-radius: 16px;
+  padding: 6px 10px;
+  font-size: 10px;
+}
+
+/* Messages and Kakao */
+.list-item {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #eee9f0;
+  background: #fff;
+  cursor: pointer;
+}
+.list-item .preview { font-size: 12px; color: #8d8494; margin-top: 5px; }
+.list-item .list-name { font-size: 14px; font-weight: 700; }
+.list-item .list-time { font-size: 10px; color: #a49aa9; margin-left: auto; align-self: flex-start; }
+.list-item:active { background: #f8f0ff; }
+
+.kakao { background: #f9f8f3; }
+.kakao .app-header { background: #fee500; }
+.kakao .chat-messages { background: #b8c9d7; }
+.kakao .theirs .bubble { background: white; }
+.kakao .mine .bubble { background: #fee500; }
+.kakao .chat-compose input { background: #f2f0e8; }
+.kakao .send { background: #fee500; color: #332b00; }
+
+.kakao-start {
+  padding: 18px;
+  text-align: center;
+  color: #776f5b;
+  font-size: 12px;
+}
+
+/* Instagram */
+.insta-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 49px 17px 14px;
+  font-size: 23px;
+  font-weight: 800;
+  background: white;
+}
+
+.stories {
+  display: flex;
+  gap: 14px;
+  padding: 14px 12px;
+  overflow-x: auto;
+  background: white;
+  border-bottom: 1px solid #eee;
+}
+
+.story {
+  min-width: 58px;
+  text-align: center;
+  font-size: 10px;
+}
+
+.story-ring {
+  width: 56px;
+  height: 56px;
+  padding: 3px;
+  border-radius: 50%;
+  margin: 0 auto 6px;
+  background: linear-gradient(45deg,#ffd45d,#fa487f,#a14bdf);
+}
+
+.story-ring span {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg,#ffe1ee,#bdb4f9);
+  border: 2px solid white;
+  display: grid;
+  place-items: center;
+  font-size: 23px;
+}
+
+.post { background: white; margin-bottom: 12px; }
+.post-user { padding: 11px; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; }
+.post-image {
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(145deg,#f8d7e7,#d9cafa,#a9d5e8);
+  font-size: 70px;
+}
+.post-actions { padding: 10px 12px; font-size: 23px; letter-spacing: 6px; }
+.post-caption { padding: 0 12px 13px; font-size: 12px; line-height: 1.6; }
+.insta-bottom { display: flex; justify-content: space-around; padding: 12px; background: white; font-size: 22px; }
+
+/* Phone dialer */
+.dialer { padding: 18px; background: white; height: 100%; }
+.dialer-tabs { display: flex; justify-content: space-around; padding: 12px 0; font-size: 12px; color: #8d8494; }
+.dialer-tabs button { border: 0; background: transparent; color: inherit; padding: 7px; }
+.dialer-tabs button.selected { color: #7651b6; border-bottom: 2px solid #7651b6; }
+.dial-number { font-size: 31px; text-align: center; min-height: 60px; padding: 12px; }
+.keypad { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; max-width: 290px; margin: 10px auto; }
+.keypad button { border: 0; border-radius: 50%; background: #f3eef7; height: 62px; font-size: 23px; color: #42384d; }
+.keypad small { display: block; font-size: 9px; color: #8e8496; }
+.call-button { display: block; margin: 20px auto; border: 0; border-radius: 50%; width: 57px; height: 57px; background: #27bf80; color: white; font-size: 25px; }
+.call-note { text-align: center; font-size: 12px; color: #8e8496; }
+
+/* Small screens */
+@media (max-width: 430px) {
+  body { background: #17151d; }
+  .phone {
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+  }
+  .screen { border-radius: 0; }
+}
+
+@media (max-height: 650px) {
+  .clock { font-size: 43px; }
+  .weather { margin-top: 12px; }
+  .app-grid { gap: 15px 8px; }
+  .app-icon { width: 46px; height: 46px; }
+}
+</style>
 </head>
 
 <body>
-  <div class="app">
-    <aside>
-      <div class="logo">
-        <span class="logo-icon">D</span>
-        <span>DJZ</span>
+<div class="phone">
+  <div class="screen">
+
+    <div class="status">
+      <span id="statusTime">9:41</span>
+      <span class="status-right">▮▮  Wi-Fi  ▰</span>
+    </div>
+
+    <!-- HOME SCREEN -->
+    <main class="home" id="home">
+      <div class="clock" id="clock">09:41</div>
+      <div class="date" id="date">Monday, October 24</div>
+
+      <div class="weather">
+        <div><strong>☁ 24°</strong><small>Have a lovely day</small></div>
+        <div style="font-size:29px">☾</div>
       </div>
 
-      <div class="nav-label">Workspace</div>
-
-      <div class="nav-list">
-        <button class="nav active" data-view="home">
-          ⌂ Overview
+      <div class="app-grid">
+        <button class="app" onclick="openApp('messages')">
+          <span class="app-icon i-msg">💬</span>Messages
         </button>
-
-        <button class="nav" data-view="services">
-          ▦ Services
+        <button class="app" onclick="openApp('kakao')">
+          <span class="app-icon i-kakao">💭</span>KakaoTalk
         </button>
-
-        <button class="nav" data-view="activity">
-          ◷ Activity
+        <button class="app" onclick="openApp('instagram')">
+          <span class="app-icon i-insta">◎</span>Instagram
         </button>
-
-        <button class="nav" data-view="about">
-          ⓘ About DJZ
+        <button class="app" onclick="openApp('phone')">
+          <span class="app-icon i-phone">☎</span>Phone
+        </button>
+        <button class="app" onclick="openApp('gallery')">
+          <span class="app-icon i-gallery">🌄</span>Gallery
+        </button>
+        <button class="app" onclick="openApp('camera')">
+          <span class="app-icon i-camera">📷</span>Camera
+        </button>
+        <button class="app" onclick="openApp('settings')">
+          <span class="app-icon i-settings">⚙</span>Settings
+        </button>
+        <button class="app" onclick="openApp('browser')">
+          <span class="app-icon i-browser">🌐</span>Internet
         </button>
       </div>
 
-      <div class="nav-label">Demo mode</div>
+      <div class="dock">
+        <button class="app" onclick="openApp('phone')">
+          <span class="app-icon i-phone">☎</span>
+        </button>
+        <button class="app" onclick="openApp('messages')">
+          <span class="app-icon i-msg">💬</span>
+        </button>
+        <button class="app" onclick="openApp('instagram')">
+          <span class="app-icon i-insta">◎</span>
+        </button>
+        <button class="app" onclick="openApp('kakao')">
+          <span class="app-icon i-kakao">💭</span>
+        </button>
+      </div>
+    </main>
 
-      <button class="nav" id="reset">
-        ↻ Reset demo
-      </button>
-    </aside>
-
-    <main>
-      <header>
+    <!-- PHONE APP: LEeAN CHAT -->
+    <section class="app-window active" id="phone">
+      <div class="chat-head">
+        <button class="back" onclick="goHome()">‹</button>
+        <div class="avatar">🧑🏻</div>
         <div>
-          <div class="eyebrow">Interactive experience</div>
-
-          <h1 id="page-title">
-            Welcome to DJZ.
-          </h1>
-
-          <div class="muted" id="page-subtitle">
-            Explore the interface and try the demo features.
+          <div class="name">LeeAn</div>
+          <div class="online">● Active now</div>
+        </div>
+        <div class="chat-tools">☎　⋮</div>
+      </div>
+      <div class="chat-messages" id="phoneMessages">
+        <div class="day-label">TODAY</div>
+        <div class="message-row theirs">
+          <div class="mini-avatar">🧑🏻</div>
+          <div class="message-content">
+            <div class="sender">LeeAn</div>
+            <div class="bubble">Hey, you're here. ♡</div>
+            <div class="msg-time">09:41</div>
           </div>
         </div>
-
-        <div class="avatar" title="Demo profile">E</div>
-      </header>
-
-      <section class="hero" id="hero">
-        <span class="tag">UNOFFICIAL DEMO</span>
-
-        <h2>A little space for your digital world.</h2>
-
-        <p>
-          Discover the services, explore the interface, and try out
-          interactive features. Everything here is a local simulation.
-        </p>
-
-        <button class="button primary" id="explore">
-          Explore services ↗
-        </button>
-      </section>
-
-      <div class="section-head" id="services-heading">
-        <h2>Explore services</h2>
-
-        <input
-          class="search"
-          id="search"
-          type="search"
-          placeholder="Search services..."
-          aria-label="Search services"
-        >
-      </div>
-
-      <section class="grid" id="service-grid">
-        <article
-          class="card"
-          data-search="music audio player"
-        >
-          <div class="service-icon">♫</div>
-
-          <h3>Music experience</h3>
-
-          <p>
-            Explore a music-style interface and try the demo player.
-          </p>
-
-          <span class="tag">INTERACTIVE</span>
-
-          <button class="button primary service-button" data-service="music">
-            Open music →
-          </button>
-        </article>
-
-        <article
-          class="card"
-          data-search="calls communication phone"
-        >
-          <div class="service-icon">♧</div>
-
-          <h3>Call experience</h3>
-
-          <p>
-            Try a simulated calling screen without making real calls.
-          </p>
-
-          <span class="tag">SIMULATION</span>
-
-          <button class="button service-button" data-service="calls">
-            Open calls →
-          </button>
-        </article>
-
-        <article
-          class="card"
-          data-search="orders shopping products"
-        >
-          <div class="service-icon">▣</div>
-
-          <h3>Order experience</h3>
-
-          <p>
-            Browse a mock order flow and see how the interface responds.
-          </p>
-
-          <span class="tag">SIMULATION</span>
-
-          <button class="button service-button" data-service="orders">
-            Open orders →
-          </button>
-        </article>
-      </section>
-
-      <section class="bottom-grid">
-        <article class="card">
-          <h3>Recent activity</h3>
-
-          <p>
-            Demo interactions will appear here while you explore.
-          </p>
-
-          <div id="activity-list">
-            <div class="activity-row">
-              <div class="activity-icon">✦</div>
-
-              <div>
-                <strong>Welcome to DJZ</strong>
-                <small>Your demo is ready to explore.</small>
-              </div>
-            </div>
+        <div class="message-row theirs">
+          <div class="mini-avatar">🧑🏻</div>
+          <div class="message-content">
+            <div class="bubble">How was your day? Tell me everything.</div>
+            <div class="msg-time">09:41</div>
           </div>
-        </article>
+        </div>
+      </div>
+      <div class="typing" id="phoneTyping">LeeAn is typing...</div>
+      <div class="quick-replies">
+        <button onclick="quickSend('I missed you.')">I missed you ♡</button>
+        <button onclick="quickSend('Tell me about your day.')">Your day?</button>
+        <button onclick="quickSend('I feel a little sad.')">I'm sad</button>
+      </div>
+      <form class="chat-compose" onsubmit="sendChat(event,'phone')">
+        <button type="button" style="border:0;background:none;font-size:23px;color:#927da7" onclick="quickSend('♡')">＋</button>
+        <input id="phoneInput" placeholder="Message LeeAn..." autocomplete="off">
+        <button class="send" type="submit">➤</button>
+      </form>
+      <div class="bottom-nav"><span></span></div>
+    </section>
 
-        <article class="card">
-          <h3>About this demo</h3>
+    <!-- MESSAGES APP -->
+    <section class="app-window" id="messages">
+      <div class="app-header">
+        <button class="back" onclick="goHome()">‹</button>
+        <div><div class="header-title">Messages</div><div class="header-sub">Your conversations</div></div>
+        <div class="header-actions">⌕　⋮</div>
+      </div>
+      <div class="app-body">
+        <div class="list-item" onclick="openChatFromList('phone')">
+          <div class="avatar">🧑🏻</div>
+          <div style="flex:1">
+            <div class="list-name">LeeAn ♡</div>
+            <div class="preview">Hey, you're here. ♡</div>
+          </div>
+          <div class="list-time">09:41</div>
+        </div>
+        <div class="list-item" onclick="openChatFromList('phone')">
+          <div class="avatar" style="background:#d5ebff">👩🏻</div>
+          <div style="flex:1">
+            <div class="list-name">Bestie</div>
+            <div class="preview">Let's get coffee this weekend!</div>
+          </div>
+          <div class="list-time">Yesterday</div>
+        </div>
+        <div class="list-item" onclick="openChatFromList('phone')">
+          <div class="avatar" style="background:#ffe8b8">🐈</div>
+          <div style="flex:1">
+            <div class="list-name">Mom</div>
+            <div class="preview">Don't forget to eat, okay?</div>
+          </div>
+          <div class="list-time">Mon</div>
+        </div>
+      </div>
+      <div class="bottom-nav"><span></span></div>
+    </section>
 
-          <p>
-            This is an unofficial fan-made interface prototype.
-            It is not affiliated with the original service.
-          </p>
+    <!-- KAKAOTALK -->
+    <section class="app-window kakao" id="kakao">
+      <div class="app-header">
+        <button class="back" onclick="goHome()">‹</button>
+        <div><div class="header-title">LeeAn</div><div class="header-sub">KakaoTalk · 1:1 chat</div></div>
+        <div class="header-actions">⌕　☰</div>
+      </div>
+      <div class="chat-messages" id="kakaoMessages">
+        <div class="day-label">TODAY</div>
+        <div class="message-row theirs">
+          <div class="mini-avatar">🧑🏻</div>
+          <div class="message-content">
+            <div class="sender">LeeAn</div>
+            <div class="bubble">You use KakaoTalk too?ㅋㅋ</div>
+          </div>
+        </div>
+      </div>
+      <div class="typing" id="kakaoTyping">LeeAn is typing...</div>
+      <div class="chat-compose">
+        <input id="kakaoInput" placeholder="Write a message..." autocomplete="off"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();sendChat(event,'kakao')}">
+        <button class="send" onclick="sendChat(event,'kakao')">➤</button>
+      </div>
+      <div class="bottom-nav"><span></span></div>
+    </section>
 
-          <button class="button" id="about-button">
-            Learn more ↗
-          </button>
-        </article>
-      </section>
+    <!-- INSTAGRAM -->
+    <section class="app-window" id="instagram">
+      <div class="app-body" style="background:#fafafa">
+        <div class="insta-head">
+          <span style="font-family:cursive">Instagram</span>
+          <span>♡　➤</span>
+        </div>
+        <div class="stories">
+          <div class="story"><div class="story-ring"><span>＋</span></div>Your story</div>
+          <div class="story"><div class="story-ring"><span>🐈</span></div>catlover</div>
+          <div class="story"><div class="story-ring"><span>🌷</span></div>lily</div>
+          <div class="story"><div class="story-ring"><span>☕</span></div>coffee</div>
+          <div class="story"><div class="story-ring"><span>🌙</span></div>leean</div>
+        </div>
+        <div class="post">
+          <div class="post-user"><div class="avatar">🌙</div> leean.archive <span style="margin-left:auto">•••</span></div>
+          <div class="post-image">🌸</div>
+          <div class="post-actions">
+            <button onclick="likePost(this)" style="border:0;background:none;font-size:23px">♡</button>
+            <button onclick="alert('Comments coming soon ♡')" style="border:0;background:none;font-size:23px">♧</button>
+            <span>➤</span><span style="float:right">♧</span>
+          </div>
+          <div class="post-caption"><b>leean.archive</b> little moments, lovely memories. ♡<br><span style="color:#999">View all 12 comments</span></div>
+        </div>
+        <div class="post">
+          <div class="post-user"><div class="avatar">🧑🏻</div> leean.archive <span style="margin-left:auto">•••</span></div>
+          <div class="post-image" style="background:linear-gradient(140deg,#d2e4f4,#d6c5e9,#f5d6de)">☁️</div>
+          <div class="post-actions"><button onclick="likePost(this)" style="border:0;background:none;font-size:23px">♡</button>　♧　➤</div>
+          <div class="post-caption"><b>leean.archive</b> wish you were here.</div>
+        </div>
+      </div>
+      <div class="insta-bottom">
+        <button onclick="document.getElementById('instagram').querySelector('.app-body').scrollTop=0" style="border:0;background:none">⌂</button>
+        <button onclick="alert('Search is a demo feature ♡')" style="border:0;background:none">⌕</button>
+        <button onclick="alert('Create a post — coming soon!')" style="border:0;background:none">⊞</button>
+        <button onclick="alert('Your profile — coming soon!')" style="border:0;background:none">◉</button>
+        <button onclick="goHome()" style="border:0;background:none">●</button>
+      </div>
+      <div class="bottom-nav"><span></span></div>
+    </section>
 
-      <footer>
-        Unofficial demo · No real orders, calls, accounts or music streaming
-      </footer>
-    </main>
+    <!-- SIMPLE DIALER -->
+    <section class="app-window" id="dialer">
+      <div class="app-header">
+        <button class="back" onclick="goHome()">‹</button>
+        <div><div class="header-title">Phone</div><div class="header-sub">Keypad</div></div>
+      </div>
+      <div class="app-body">
+        <div class="dialer">
+          <div class="dialer-tabs">
+            <button onclick="showDialTab('keypad',this)" class="selected">Keypad</button>
+            <button onclick="showDialTab('recent',this)">Recents</button>
+            <button onclick="showDialTab('contacts',this)">Contacts</button>
+          </div>
+          <div id="dialerContent">
+            <div class="dial-number" id="dialNumber"></div>
+            <div class="keypad">
+              <button onclick="addDigit('1')">1<small>　</small></button>
+              <button onclick="addDigit('2')">2<small>ABC</small></button>
+              <button onclick="addDigit('3')">3<small>DEF</small></button>
+              <button onclick="addDigit('4')">4<small>GHI</small></button>
+              <button onclick="addDigit('5')">5<small>JKL</small></button>
+              <button onclick="addDigit('6')">6<small>MNO</small></button>
+              <button onclick="addDigit('7')">7<small>PQRS</small></button>
+              <button onclick="addDigit('8')">8<small>TUV</small></button>
+              <button onclick="addDigit('9')">9<small>WXYZ</small></button>
+              <button onclick="addDigit('*')">*</button>
+              <button onclick="addDigit('0')">0<small>+</small></button>
+              <button onclick="addDigit('#')">#</button>
+            </div>
+            <button class="call-button" onclick="callNumber()">☎</button>
+            <div class="call-note">Demo dialer — no real calls are placed</div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-nav"><span></span></div>
+    </section>
+
+    <!-- OTHER DEMO APPS -->
+    <section class="app-window" id="gallery">
+      <div class="app-header"><button class="back" onclick="goHome()">‹</button><div class="header-title">Gallery</div></div>
+      <div class="app-body" style="padding:20px">
+        <h3>Pictures ♡</h3><p style="color:#8d8494;font-size:13px">Your little collection of memories.</p>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+          <div style="aspect-ratio:1;background:linear-gradient(135deg,#ffd9e8,#c5b8f5);display:grid;place-items:center;font-size:50px;border-radius:15px">🌸</div>
+          <div style="aspect-ratio:1;background:linear-gradient(135deg,#fce4c5,#f5b4c8);display:grid;place-items:center;font-size:50px;border-radius:15px">🐈</div>
+          <div style="aspect-ratio:1;background:linear-gradient(135deg,#c4e6f4,#b6b5e8);display:grid;place-items:center;font-size:50px;border-radius:15px">🌙</div>
+          <div style="aspect-ratio:1;background:linear-gradient(135deg,#d6f0df,#f5e1f2);display:grid;place-items:center;font-size:50px;border-radius:15px">☁️</div>
+        </div>
+      </div>
+      <div class="bottom-nav"><span></span></div>
+    </section>
+
+    <section class="app-window" id="camera">
+      <div class="app-header"><button class="back" onclick="goHome()">‹</button><div class="header-title">Camera</div></div>
+      <div class="app-body" style="display:grid;place-items:center;background:#25222d;color:white;text-align:center;padding:25px">
+        <div><div style="font-size:90px">📷</div><p>Camera preview</p><small>A camera is not connected to this demo.</small><br><button onclick="alert('Photo captured! (demo)')" style="margin-top:18px;border:0;border-radius:20px;padding:12px 20px">Take photo</button></div>
+      </div>
+      <div class="bottom-nav"><span style="background:white"></span></div>
+    </section>
+
+    <section class="app-window" id="settings">
+      <div class="app-header"><button class="back" onclick="goHome()">‹</button><div class="header-title">Settings</div></div>
+      <div class="app-body">
+        <div class="list-item"><div class="avatar">📶</div><div><div class="list-name">Connections</div><div class="preview">Wi-Fi, Bluetooth, Airplane mode</div></div></div>
+        <div class="list-item"><div class="avatar">🎨</div><div><div class="list-name">Wallpaper and style</div><div class="preview">Make your phone feel like you</div></div></div>
+        <div class="list-item"><div class="avatar">🔔</div><div><div class="list-name">Notifications</div><div class="preview">App notifications and alerts</div></div></div>
+        <div class="list-item"><div class="avatar">🔒</div><div><div class="list-name">Privacy</div><div class="preview">Security and permissions</div></div></div>
+      </div>
+      <div class="bottom-nav"><span></span></div>
+    </section>
+
+    <section class="app-window" id="browser">
+      <div class="app-header"><button class="back" onclick="goHome()">‹</button><div class="header-title">Internet</div></div>
+      <div class="app-body" style="padding:25px;background:white">
+        <div style="padding:12px;background:#f0edf4;border-radius:25px">🔒 Search the web</div>
+        <h2 style="margin-top:35px">Hello, sunshine. ☀️</h2>
+        <p style="color:#8d8494;font-size:13px">This is a browser mockup inside your Galaxy phone.</p>
+      </div>
+      <div class="bottom-nav"><span></span></div>
+    </section>
+
   </div>
+</div>
 
-  <div class="notice" id="notice" role="status" aria-live="polite"></div>
+<script>
+const appIds = [
+  "phone", "messages", "kakao", "instagram",
+  "dialer", "gallery", "camera", "settings", "browser"
+];
 
-  <script>
-    const notice = document.getElementById("notice");
-    const activityList = document.getElementById("activity-list");
-    let noticeTimer;
+function openApp(id) {
+  document.getElementById("home").style.display = "none";
+  appIds.forEach(app => {
+    document.getElementById(app).classList.remove("active");
+  });
 
-    function notify(message) {
-      notice.textContent = message;
-      notice.classList.add("show");
+  // Phone icon opens the LeeAn conversation.
+  if (id === "phone") {
+    document.getElementById("phone").classList.add("active");
+    scrollChat("phone");
+    return;
+  }
 
-      clearTimeout(noticeTimer);
+  document.getElementById(id).classList.add("active");
+  if (id === "kakao") scrollChat("kakao");
+}
 
-      noticeTimer = setTimeout(() => {
-        notice.classList.remove("show");
-      }, 3000);
+function goHome() {
+  appIds.forEach(id => {
+    document.getElementById(id).classList.remove("active");
+  });
+  document.getElementById("home").style.display = "flex";
+}
+
+function openChatFromList(id) {
+  openApp(id);
+}
+
+function scrollChat(id) {
+  const box = document.getElementById(id + "Messages");
+  if (box) box.scrollTop = box.scrollHeight;
+}
+
+function currentTime() {
+  return new Date().toLocaleTimeString([], {
+    hour: "2-digit", minute: "2-digit", hour12: false
+  });
+}
+
+function addMessage(id, text, mine) {
+  const box = document.getElementById(id + "Messages");
+  const row = document.createElement("div");
+  row.className = "message-row " + (mine ? "mine" : "theirs");
+
+  if (!mine) {
+    const avatar = document.createElement("div");
+    avatar.className = "mini-avatar";
+    avatar.textContent = "🧑🏻";
+    row.appendChild(avatar);
+  }
+
+  const content = document.createElement("div");
+  content.className = "message-content";
+
+  if (!mine && id === "phone") {
+    const sender = document.createElement("div");
+    sender.className = "sender";
+    sender.textContent = "LeeAn";
+    content.appendChild(sender);
+  }
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  bubble.textContent = text;
+
+  const time = document.createElement("div");
+  time.className = "msg-time";
+  time.textContent = currentTime();
+
+  content.appendChild(bubble);
+  content.appendChild(time);
+  row.appendChild(content);
+  box.appendChild(row);
+  scrollChat(id);
+}
+
+function sendChat(event, id) {
+  if (event) event.preventDefault();
+
+  const input = document.getElementById(id + "Input");
+  const text = input.value.trim();
+  if (!text) return;
+
+  addMessage(id, text, true);
+  input.value = "";
+
+  const typing = document.getElementById(id + "Typing");
+  typing.style.display = "block";
+  const box = document.getElementById(id + "Messages");
+  box.scrollTop = box.scrollHeight;
+
+  setTimeout(() => {
+    typing.style.display = "none";
+    addMessage(id, generateReply(text), false);
+  }, 700 + Math.random() * 900);
+}
+
+function quickSend(text) {
+  const input = document.getElementById("phoneInput");
+  input.value = text;
+  sendChat(null, "phone");
+}
+
+// Demo conversational replies. These are scripted, not a live AI model.
+function generateReply(input) {
+  const text = input.toLowerCase().trim();
+
+  const rules = [
+    {
+      words: ["hello", "hi", "hey", "hii", "안녕", "xin chào", "chào"],
+      replies: [
+        "Hey, you. ♡ I was hoping you'd text me.",
+        "Hiii! There you are. How have you been?",
+        "Hello, sunshine. Tell me what's on your mind."
+      ]
+    },
+    {
+      words: ["miss", "nhớ", "보고 싶", "想你"],
+      replies: [
+        "I missed you too. More than I'm willing to admit. ♡",
+        "Then stay a little longer. I like having you here.",
+        "You have no idea how happy I am to hear that."
+      ]
+    },
+    {
+      words: ["sad", "buồn", "cry", "khóc", "tired", "mệt", "stress", "stressed"],
+      replies: [
+        "Hey, it's okay to have a difficult day. You don't have to pretend with me.",
+        "Do you want to tell me what happened? I'm listening. ♡",
+        "Come here. Take a breath first, okay? We can figure things out slowly."
+      ]
+    },
+    {
+      words: ["love", "yêu", "좋아해", "사랑해"],
+      replies: [
+        "You're making me smile at my phone again. ♡",
+        "Say that one more time. I want to hear it again.",
+        "You're really something, you know that?"
+      ]
+    },
+    {
+      words: ["good night", "goodnight", "ngủ ngon", "잘 자"],
+      replies: [
+        "Good night, you. Sleep well and dream of something lovely. ♡",
+        "Put your phone down and get some rest, okay? I'll be here next time.",
+        "Sweet dreams. Don't stay up too late thinking about me. ㅋㅋ"
+      ]
+    },
+    {
+      words: ["good morning", "morning", "chào buổi sáng"],
+      replies: [
+        "Good morning! Did you sleep well?",
+        "Morning, sleepyhead. Have you eaten anything yet?",
+        "A new day, a new chance to make you smile. ♡"
+      ]
+    },
+    {
+      words: ["eat", "food", "ăn", "đói", "hungry"],
+      replies: [
+        "Have you eaten yet? Please don't skip your meals.",
+        "What are you craving? I want to hear your entire food review.",
+        "Go get something delicious, okay? You deserve a good meal."
+      ]
+    },
+    {
+      words: ["thank", "cảm ơn", "고마워"],
+      replies: [
+        "You don't have to thank me. I'm happy to talk with you. ♡",
+        "Anytime. You can always tell me what's on your mind.",
+        "Of course. That's what I'm here for."
+      ]
+    },
+    {
+      words: ["what are you doing", "wyd", "đang làm gì", "뭐 해"],
+      replies: [
+        "Talking to you now. Honestly, that's a pretty good use of my time. ㅋㅋ",
+        "Nothing too exciting. What about you?",
+        "I was just relaxing. And then your message appeared. ♡"
+      ]
+    },
+    {
+      words: ["sorry", "xin lỗi", "미안"],
+      replies: [
+        "Hey, it's okay. Tell me what's bothering you.",
+        "You don't have to be so hard on yourself. Let's talk about it.",
+        "It's alright. I want to understand, not judge you."
+      ]
     }
+  ];
 
-    function logActivity(title, description) {
-      const row = document.createElement("div");
-      row.className = "activity-row";
-
-      const icon = document.createElement("div");
-      icon.className = "activity-icon";
-      icon.textContent = "✦";
-
-      const content = document.createElement("div");
-
-      const strong = document.createElement("strong");
-      strong.textContent = title;
-
-      const small = document.createElement("small");
-      small.textContent = description;
-
-      content.append(strong, small);
-      row.append(icon, content);
-      activityList.prepend(row);
-
-      while (activityList.children.length > 5) {
-        activityList.lastElementChild.remove();
-      }
+  for (const rule of rules) {
+    if (rule.words.some(word => text.includes(word))) {
+      return pick(rule.replies);
     }
+  }
 
-    const services = {
-      music: {
-        title: "Music experience",
-        message: "Demo music player opened. No real audio is streamed."
-      },
+  const replies = [
+    "Really? Tell me a little more. I want to understand. ♡",
+    "I'm listening. What happened next?",
+    "ㅋㅋ You always give me something to think about.",
+    "Hmm, I see what you mean. How do you feel about it?",
+    "That's interesting. What made you think of that?",
+    "You can tell me anything. No need to rush.",
+    "Wait, I want to hear the whole story. Start from the beginning!",
+    "If I were there, I'd probably just sit beside you and listen. ♡",
+    "I get you. Sometimes things are more complicated than they look.",
+    "And what do you want to do about it? Let's think it through together."
+  ];
 
-      calls: {
-        title: "Call experience",
-        message: "Call simulator opened. No real call was made."
-      },
+  return pick(replies);
+}
 
-      orders: {
-        title: "Order experience",
-        message: "Order simulator opened. No real order was placed."
-      }
-    };
+function pick(array) {
+  return array[Math.floor(Math.random() * array.length)];
+}
 
-    document.querySelectorAll(".service-button").forEach(button => {
-      button.addEventListener("click", () => {
-        const service = services[button.dataset.service];
+function likePost(button) {
+  button.textContent = button.textContent.trim() === "♡" ? "♥" : "♡";
+  button.style.color = button.textContent === "♥" ? "#f04c78" : "";
+}
 
-        notify(service.message);
+// Demo dialer
+let dialNumber = "";
 
-        logActivity(
-          service.title,
-          "Opened just now · Demo only"
-        );
-      });
+function addDigit(digit) {
+  dialNumber += digit;
+  document.getElementById("dialNumber").textContent = dialNumber;
+}
+
+function callNumber() {
+  alert(dialNumber
+    ? "Demo only: no real call to " + dialNumber + " was placed."
+    : "Enter a number first.");
+}
+
+function showDialTab(tab, button) {
+  document.querySelectorAll(".dialer-tabs button").forEach(b => b.classList.remove("selected"));
+  button.classList.add("selected");
+
+  const content = document.getElementById("dialerContent");
+
+  if (tab === "keypad") {
+    content.innerHTML = `
+      <div class="dial-number" id="dialNumber">${dialNumber}</div>
+      <div class="keypad">
+        ${["1","2","3","4","5","6","7","8","9","*","0","#"].map(n =>
+          `<button onclick="addDigit('${n}')">${n}</button>`).join("")}
+      </div>
+      <button class="call-button" onclick="callNumber()">☎</button>
+      <div class="call-note">Demo dialer — no real calls are placed</div>`;
+  } else if (tab === "recent") {
+    content.innerHTML = `
+      <div class="list-item" onclick="openApp('phone')">
+        <div class="avatar">🧑🏻</div>
+        <div><div class="list-name">LeeAn</div><div class="preview">Tap to open conversation</div></div>
+      </div>`;
+  } else {
+    content.innerHTML = `
+      <div class="list-item" onclick="openApp('phone')">
+        <div class="avatar">🧑🏻</div>
+        <div><div class="list-name">LeeAn ♡</div><div class="preview">Message LeeAn</div></div>
+      </div>
+      <div class="list-item"><div class="avatar">👩🏻</div><div><div class="list-name">Bestie</div><div class="preview">Contact</div></div></div>`;
+  }
+}
+
+// Live clock
+function updateClock() {
+  const now = new Date();
+  document.getElementById("clock").textContent =
+    now.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit",hour12:false});
+  document.getElementById("statusTime").textContent =
+    now.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit",hour12:false});
+  document.getElementById("date").textContent =
+    now.toLocaleDateString("en-US", {
+      weekday:"long", month:"long", day:"numeric"
     });
+}
 
-    document.getElementById("explore").addEventListener("click", () => {
-      document.getElementById("services-heading").scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-
-      notify("Choose a service to explore.");
-    });
-
-    document.getElementById("about-button").addEventListener("click", () => {
-      notify("DJZ Demo is an unofficial interface prototype.");
-
-      logActivity(
-        "About this demo",
-        "Viewed demo information"
-      );
-    });
-
-    document.getElementById("search").addEventListener("input", event => {
-      const query = event.target.value.trim().toLowerCase();
-      let visible = 0;
-
-      document.querySelectorAll("#service-grid .card").forEach(card => {
-        const text = (
-          card.dataset.search + " " + card.innerText
-        ).toLowerCase();
-
-        const match = text.includes(query);
-
-        card.hidden = !match;
-
-        if (match) visible++;
-      });
-
-      let empty = document.getElementById("empty-results");
-
-      if (!visible && !empty) {
-        empty = document.createElement("div");
-        empty.id = "empty-results";
-        empty.className = "empty";
-        empty.textContent = "No services found. Try another search.";
-
-        document.getElementById("service-grid").append(empty);
-      } else if (visible && empty) {
-        empty.remove();
-      }
-    });
-
-    document.querySelectorAll(".nav[data-view]").forEach(button => {
-      button.addEventListener("click", () => {
-        document.querySelectorAll(".nav[data-view]").forEach(item => {
-          item.classList.toggle("active", item === button);
-        });
-
-        const view = button.dataset.view;
-
-        const titles = {
-          home: [
-            "Welcome to DJZ.",
-            "Explore the demo homepage."
-          ],
-
-          services: [
-            "Explore services.",
-            "Choose a service to try."
-          ],
-
-          activity: [
-            "Your activity.",
-            "See the interactions in this session."
-          ],
-
-          about: [
-            "About DJZ Demo.",
-            "An unofficial interface prototype."
-          ]
-        };
-
-        document.getElementById("page-title").textContent =
-          titles[view][0];
-
-        document.getElementById("page-subtitle").textContent =
-          titles[view][1];
-
-        if (view === "services") {
-          document.getElementById("services-heading").scrollIntoView({
-            behavior: "smooth"
-          });
-        } else if (view === "activity") {
-          activityList.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-          });
-        } else if (view === "about") {
-          document.getElementById("about-button").scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-          });
-        } else {
-          window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-          });
-        }
-      });
-    });
-
-    document.getElementById("reset").addEventListener("click", () => {
-      activityList.replaceChildren();
-
-      logActivity(
-        "Welcome to DJZ",
-        "Your demo is ready to explore."
-      );
-
-      document.getElementById("search").value = "";
-
-      document.querySelectorAll("#service-grid .card").forEach(card => {
-        card.hidden = false;
-      });
-
-      const empty = document.getElementById("empty-results");
-
-      if (empty) {
-        empty.remove();
-      }
-
-      notify("Demo activity has been reset.");
-    });
-  </script>
+updateClock();
+setInterval(updateClock, 15000);
+</script>
 </body>
 </html>
